@@ -1,0 +1,261 @@
+﻿
+@{
+    ViewBag.Title = "QuestionList";
+}
+<h2>@ViewBag.Title.</h2>
+
+
+<a href="#article-editor" class="btn btn-primary" data-toggle="modal">Add Question</a>
+<div class="modal fade" id="article-editor" background-color: white; >
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal">&times;</a>
+        <h3>Add new question details</h3>
+    </div>
+    <div class="modal-body">
+        <form >
+            <div class="container">
+                <label for="Name"><b>Name</b></label>
+                <input type="text" placeholder="Enter Question Name" name="Name" id="txtquestionname" required>
+
+                <label for="psw"><b>Question Type</b></label>
+                <select id="ddltype">
+                    <option>Single Answer</option>
+                    <option>Multiple Answer</option>
+                </select>
+            </div>
+            <div class="container">
+                <label for="Name"><b>Type 1</b></label>
+                <input type="text" placeholder="Enter Type 1" name="Type1" id="txttype1" required>
+                <label for="psw"><b>Type 2</b></label>
+                <input type="text" placeholder="Enter Type 2" name="Type2" id="txttype2" required>
+                <label for="psw"><b>Type 3</b></label>
+                <input type="text" placeholder="Enter Type 3" name="Type3" id="txttype3" required>
+                <label for="type4"><b>Type 4</b></label>
+                <input type="text" placeholder="Enter Type 4" name="Type4" id="txttype4" required>
+            </div>
+            <div class="container">
+                <label for="Answer"><b>Answer</b></label>
+                <input type="text" placeholder="Enter Answer" name="Answer" id="txtanswer" required>
+
+            </div>
+           
+        </form>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Close</a>
+        <a href="#" class="btn btn-primary" onclick="SaveQuestion();">Save Changes</a>
+        @*<button type="submit" id="button1" name="button1" formaction='@Url.Action("Action", "Home")'>Save</button>*@
+    </div>
+</div>
+<div style="width:90%; margin:0 auto;">
+    <table id="myTable">
+        <thead>
+            <tr>
+                <th>Question</th>
+                <th>Type 1</th>
+                <th>Type 2</th>
+                <th>Type 3</th>
+                <th>type 4</th>
+                <th>Answer</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+<style>
+    tr.even {
+        background-color: #F5F5F5 !important;
+    }
+
+    #container .modal.fade {
+        left: -25%;
+        -webkit-transition: opacity 0.3s linear, left 0.3s ease-out;
+        -moz-transition: opacity 0.3s linear, left 0.3s ease-out;
+        -o-transition: opacity 0.3s linear, left 0.3s ease-out;
+        transition: opacity 0.3s linear, left 0.3s ease-out;
+    }
+
+        #container .modal.fade.in {
+            left: 50%;
+        }
+
+    #container .modal-body {
+        max-height: 50px;
+    }
+
+    .modal {
+        position: fixed;
+        top: 100px;
+        right: 200px;
+        bottom: 73px;
+        left: 140px;
+        z-index: 1050;
+        background-color: white;
+    }
+
+    * {
+        box-sizing: border-box
+    }
+
+    /* Add padding to containers */
+    .container {
+        padding: 16px;
+    }
+
+    /* Full-width input fields */
+    input[type=text] {
+        width: 15%;
+        padding: 10px;
+        margin: 0px 0 0px 0;
+        display: inline-block;
+        border: none;
+        background: #f1f1f1;
+    }
+
+        input[type=text]:focus, input[type=password]:focus {
+            background-color: #ddd;
+            outline: none;
+        }
+
+    /* Overwrite default styles of hr */
+    hr {
+        border: 1px solid #f1f1f1;
+        margin-bottom: 25px;
+    }
+
+    /* Set a style for the submit/register button */
+    .registerbtn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 16px 20px;
+        margin: 8px 0;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        opacity: 0.9;
+    }
+
+        .registerbtn:hover {
+            opacity: 1;
+        }
+
+    /* Add a blue text color to links */
+    a {
+        color: dodgerblue;
+    }
+
+    /* Set a grey background color and center the text of the "sign in" section */
+    .signin {
+        background-color: #f1f1f1;
+        text-align: center;
+    }
+</style>
+
+@* Load datatable css *@
+<link href="//cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="//Content/bootstrap.min.css" rel="stylesheet" />
+@*@
+@* Load datatable js *@
+@section Scripts{
+   
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<link href="//cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" />
+
+    <script>
+        $(document).ready(function () {
+
+        
+
+            $('#myTable').DataTable({
+                "ajax": {
+                    "url": "/home/GetAPIData",
+                    "type": "GET",
+                    "datatype": "json"
+                },
+                "columns": [
+                    { "data": "QuestionId", "autoWidth": true },
+                    { "data": "Question", "autoWidth": true },
+                    { "data": "QuestionType", "autoWidth": true },
+                    { "data": "Answer", "autoWidth": true },
+                    { "data": "QuestionId", "autoWidth": true },
+                    { "data": "Question", "autoWidth": true },
+                    { "data": "Answer", "autoWidth": true },
+                    
+        {
+         "render": function(data, type, row, meta) {
+        //var data2 = table.row( $(this).parents('tr') ).data();
+        return '<button data-name="' + row[0] + '" >Click!</button>';
+      }
+    }
+                    //{ "data": "City", "autoWidth": true },
+                    //{ "data": "PostalCode", "autoWidth": true }
+                ]
+            });
+        });
+
+        $('#myTable').on('click', 'button', function() {
+  console.log($(this).data('name'));
+});
+        function EditQuestion(r)
+        {
+        
+        alert(r);
+        }
+        function SaveQuestion() {
+        $("#article-editor .close").click()
+        
+            var QuestionType = $("#ddltype option:selected").val();
+            var QuestionName = $("#txtquestionname").val();
+            
+            var QuestionType1 = $("#txttype1").val();
+            var QuestionType2 = $("#txttype2").val();
+            var QuestionType3 = $("#txttype3").val();
+            var QuestionType4 = $("#txttype4").val();
+
+            var QuestionAnswer = $("#txtanswer").val();
+            
+
+            ////var QList     = [
+                
+            ////        QuestionType = QuestionType,
+            ////        Question = QuestionName,
+            ////        Type1 = QuestionType1,
+            ////        Type2 = QuestionType2,
+            ////        Type3 = QuestionType3,
+            ////        Type4 = QuestionType4,
+            ////        Answer = QuestionAnswer,
+                
+            ////];
+            var dataObject = JSON.stringify({
+                'QuestionType' : QuestionType,
+                'Question' : QuestionName,
+                'Type1' : QuestionType1,
+                'Type2' : QuestionType2,
+                'Type3' : QuestionType3,
+                'Type4' : QuestionType4,
+                'Answer' : QuestionAnswer,
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/home/SaveQuestionDetails",
+                data: dataObject,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (r) {
+        var jsdata = JSON.parse(r.data);
+        alert(jsdata.QuestionId );
+                      $("#article").modal('hide');
+                },
+                failure: function (r) {
+                    alert(r.d);
+                },
+                error: function (r) {
+                    alert(r.d);
+                }
+            });
+        }
+    </script>
+}
